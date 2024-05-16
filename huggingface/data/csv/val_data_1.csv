@@ -1,0 +1,26 @@
+input,output
+B 4 9 E [MASK],9
+B 1 4 E [MASK],4
+B 2 6 E [MASK],6
+B 5 2 E [MASK],5
+B 9 2 E [MASK],9
+B 9 4 E [MASK],9
+B 6 4 E [MASK],6
+B 0 0 E [MASK],0
+B 7 5 E [MASK],7
+B 1 9 E [MASK],9
+B 1 5 E [MASK],5
+B 2 2 E [MASK],2
+B 4 10 E [MASK],10
+B 0 10 E [MASK],10
+B 10 1 E [MASK],10
+B 3 7 E [MASK],7
+B 9 7 E [MASK],9
+B 8 10 E [MASK],10
+B 6 9 E [MASK],9
+B 4 0 E [MASK],4
+B 10 3 E [MASK],10
+B 2 3 E [MASK],3
+B 5 5 E [MASK],5
+B 5 8 E [MASK],8
+B 0 2 E [MASK],2
