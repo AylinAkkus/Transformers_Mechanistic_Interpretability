@@ -1,3 +1,0 @@
-text,labels
-"The quick brown [MASK] jumps over the lazy dog.","fox"
-"The quick brown [MASK] runs over the lazy dog.","bunny"
