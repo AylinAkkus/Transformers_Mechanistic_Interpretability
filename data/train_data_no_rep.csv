@@ -1,4 +1,4 @@
-input,label
+text,labels
 '329 245 [SEP] [MASK]','329'
 '329 82 [SEP] [MASK]','329'
 '329 134 [SEP] [MASK]','329'

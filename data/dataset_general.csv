@@ -1,4 +1,4 @@
-input,label
+text,labels
 '0 1 [SEP] [MASK]','1'
 '0 2 [SEP] [MASK]','2'
 '0 3 [SEP] [MASK]','3'

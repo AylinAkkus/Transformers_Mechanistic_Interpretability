@@ -1,0 +1,12 @@
+# Ignore node_modules directory
+miscellaneous/
+logs/
+wandb/
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+.vscode/
+
+.env/
