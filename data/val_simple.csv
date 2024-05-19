@@ -1,0 +1,7 @@
+text,labels
+'1 2 [SEP] [MASK]','2'
+'1 3 [SEP] [MASK]','3'
+'2 3 [SEP] [MASK]','3'
+'2 1 [SEP] [MASK]','2'
+'3 1 [SEP] [MASK]','3'
+'3 2 [SEP] [MASK]','3'
