@@ -3,12 +3,14 @@
 from transformers import AutoTokenizer, AutoConfig, AutoModelForMaskedLM, TrainingArguments, DataCollatorWithPadding, Trainer
 import pandas as pd
 from datasets import Dataset
+import wandb
 
 LOG_DIR = "logs/simple_model"
 DATA_TRAIN_PATH = "data/train_simple.csv"
 DATA_EVAL_PATH = "data/val_simple.csv"
-TRAIN_EPOCHS = 10000
+TRAIN_EPOCHS = 20000
 MODEL_NAME = "distilbert-base-uncased"
+RESUME_FROM_CHECKPOINT = True
 
 
 def tokenize_and_prepare_labels(dataset):
@@ -30,6 +32,7 @@ def tokenize_and_prepare_labels(dataset):
 
 
 if __name__ == "__main__":
+    wandb.init(project="1l1h_simple")
     config = AutoConfig.from_pretrained(MODEL_NAME, n_heads=1, n_layers=1)
     # print(config)
     model = AutoModelForMaskedLM.from_config(config)
@@ -41,6 +44,14 @@ if __name__ == "__main__":
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         num_train_epochs=TRAIN_EPOCHS,
+        evaluation_strategy='epoch',
+        logging_strategy='epoch',
+        logging_steps=10,
+        report_to='wandb',  # Enable logging to wandb
+        run_name='my_training_run',  # Name of the run in wandb
+        save_steps=1000,  # Save checkpoint every 500 steps
+        save_total_limit=2,  # Only keep the last 2 checkpoints
+        resume_from_checkpoint=RESUME_FROM_CHECKPOINT,  # Resume from the last checkpoint
         seed=42,
     )
 
@@ -51,6 +62,7 @@ if __name__ == "__main__":
     tokenized_dataset_train = dataset_train.map(tokenize_and_prepare_labels, batched=True)
     tokenized_dataset_eval = dataset_eval.map(tokenize_and_prepare_labels, batched=True)
     tokenized_dataset_train = tokenized_dataset_train.shuffle(seed=42)
+    print(tokenized_dataset_train)
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
@@ -63,7 +75,8 @@ if __name__ == "__main__":
         data_collator=data_collator,
     )
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=RESUME_FROM_CHECKPOINT)
 
     trainer.save_model(LOG_DIR + "/trained")
 
+    wandb.finish()

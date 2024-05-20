@@ -1,6 +1,6 @@
 from transformers import pipeline, AutoModelForMaskedLM, AutoTokenizer
 
-model_path = './logs/simple_model'
+model_path = './logs/simple_model/checkpoint-20000'
 model = AutoModelForMaskedLM.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
