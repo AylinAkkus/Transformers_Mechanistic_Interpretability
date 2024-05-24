@@ -10,3 +10,10 @@ Thumbs.db
 .vscode/
 
 .env/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# ignore tempCodeRunnerFile.py
+/src/tempCodeRunnerFile.py
