@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 
-from transformers import AutoTokenizer, AutoConfig, AutoModelForMaskedLM, TrainingArguments, DataCollatorWithPadding, Trainer
+from transformers import AutoTokenizer, AutoConfig, AutoModelForMaskedLM, TrainingArguments, DataCollatorWithPadding, Trainer, EarlyStoppingCallback
 import pandas as pd
 from datasets import Dataset
 import wandb
 
-PROJECT_NAME = "1l1h_no_pairs_rep"
-
+PROJECT_NAME = "1l1h_no_same_permutation"
 LOG_DIR = f"logs/{PROJECT_NAME}"
-DATA_TRAIN_PATH = "data/no_pairs_rep_train.csv"
-DATA_EVAL_PATH = "data/no_pairs_rep_test.csv"
-TRAIN_EPOCHS = 10
+DATA_TRAIN_PATH = "data/train_data_2.csv"
+DATA_EVAL_PATH = "data/val_data_2.csv"
+TRAIN_EPOCHS = 5
 MODEL_NAME = "distilbert-base-uncased"
 RESUME_FROM_CHECKPOINT = True
+EARLY_STOPPING_PATIENCE = 5
+LR = 2e-5
+LOGGING_PER_STEPS = 200
+SAVE_PER_STEPS = 1000
+SAVE_TOTAL_LIMIT = 3
 
 
 def tokenize_and_prepare_labels(dataset):
@@ -44,19 +48,20 @@ if __name__ == "__main__":
 
     training_args = TrainingArguments(
         output_dir=LOG_DIR,
-        learning_rate=2e-5,
+        learning_rate=LR,
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         num_train_epochs=TRAIN_EPOCHS,
         evaluation_strategy='steps',
         logging_strategy='steps',
-        logging_steps=500,
+        logging_steps=LOGGING_PER_STEPS,
         report_to='wandb',  # Enable logging to wandb
         run_name='my_training_run',  # Name of the run in wandb
-        save_steps=1000,  # Save checkpoint every 500 steps
-        # save_total_limit=3,  # Only keep the last 2 checkpoints
+        save_steps=SAVE_PER_STEPS,  # Save checkpoint every 500 steps
+        save_total_limit=SAVE_TOTAL_LIMIT,  # Only keep the last 2 checkpoints
         resume_from_checkpoint=RESUME_FROM_CHECKPOINT,  # Resume from the last checkpoint
         seed=42,
+        load_best_model_at_end=True
     )
 
     data_train = pd.read_csv(DATA_TRAIN_PATH, dtype=str)
@@ -69,6 +74,8 @@ if __name__ == "__main__":
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
+    early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=EARLY_STOPPING_PATIENCE)
+
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -76,6 +83,7 @@ if __name__ == "__main__":
         eval_dataset=tokenized_dataset_eval,
         tokenizer=tokenizer,
         data_collator=data_collator,
+        callbacks=[early_stopping_callback]
     )
 
     trainer.train(resume_from_checkpoint=RESUME_FROM_CHECKPOINT)
