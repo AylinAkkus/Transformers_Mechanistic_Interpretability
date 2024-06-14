@@ -3,8 +3,13 @@ import pandas as pd
 import random
 from tqdm import tqdm
 
-MODEL_PATH = './logs/1l1h_no_same_permutation/trained'
-DATA_PATH = './data/val_data_2.csv' 
+MODEL_NAME = '1l1h_top_two_max_len_3'
+# MODEL_NAME = '1l1h_no_same_permutation'
+# MODEL_PATH = './logs/1l1h_no_same_permutation/trained'
+MODEL_PATH = f'./logs/{MODEL_NAME}/trained'
+DATA_PATH = './data/top_two_max_len_3_val.csv' 
+# DATA_PATH = './data/no_pairs_rep_test.csv' 
+# DATA_PATH = './data/test_no_rep.csv' 
 
 def test_specific_samples(list1, list2):
     """
@@ -72,9 +77,9 @@ def test_whole_set_top1(data_eval, output_file=None):
                 f.write(f"Predicted word: {wrong_predictions[i][1]}\n")
                 f.write(f"True word: {wrong_predictions[i][2]}\n")
                 f.write(f"Score: {wrong_predictions[i][3]:.4f}\n\n")
-        print(f"Number of samples in the test set: {len(text)}")
-        print(f"Number of wrong predictions: {len(wrong_predictions)}")
-        print(f"Accuracy: {(len(text) - len(wrong_predictions)) / len(text) * 100:.2f}%")
+            f.write(f"Number of samples in the test set: {len(text)}\n")
+            f.write(f"Number of wrong predictions: {len(wrong_predictions)}\n")
+            f.write(f"Accuracy: {(len(text) - len(wrong_predictions)) / len(text) * 100:.2f}%\n")
         print(f"Wrong predictions are saved to {output_file}")
     else:
         print("Wrong predictions:")
@@ -101,4 +106,4 @@ if __name__ == '__main__':
 
     data_eval = pd.read_csv(DATA_PATH, dtype=str)
 
-    test_whole_set_top1(data_eval, output_file='./logs/1l1h_no_same_permutation/wrong_predictions.txt')
+    test_whole_set_top1(data_eval, output_file=f'./logs/{MODEL_NAME}/wrong_predictions.txt')
