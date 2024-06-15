@@ -5,20 +5,21 @@ import pandas as pd
 from datasets import Dataset
 import wandb
 
-PROJECT_NAME = "1l1h_top_two_max_len_3"
+PROJECT_NAME = "1l1h_top_two_max_len_3_range_64"
 N_LAYERS = 1
 N_HEADS = 1
 LOG_DIR = f"logs/{PROJECT_NAME}"
 DATA_TRAIN_PATH = "data/top_two_max_len_3_train.csv"
 DATA_EVAL_PATH = "data/top_two_max_len_3_val.csv"
-TRAIN_EPOCHS = 20
+TRAIN_EPOCHS = 1
 MODEL_NAME = "distilbert-base-uncased"
-RESUME_FROM_CHECKPOINT = True
+RESUME_FROM_CHECKPOINT = False
 EARLY_STOPPING_PATIENCE = 5
 LR = 2e-5
 LOGGING_PER_STEPS = 200
 SAVE_PER_STEPS = 1000
-SAVE_TOTAL_LIMIT = 3
+SAVE_TOTAL_LIMIT = 2
+PER_DEVICE_BATCH_SIZE = 32
 
 
 def tokenize_and_prepare_labels(dataset):
@@ -61,6 +62,9 @@ def tokenize_and_prepare_labels_multiple_masks(dataset):
     return tokenized_dataset
 
 if __name__ == "__main__":
+    np.random.seed(42)
+    torch.random.manual_seed(42)
+
     wandb.init(project=f"{PROJECT_NAME}")
     config = AutoConfig.from_pretrained(MODEL_NAME, n_heads=N_HEADS, n_layers=N_LAYERS)
     # print(config)
@@ -70,8 +74,8 @@ if __name__ == "__main__":
     training_args = TrainingArguments(
         output_dir=LOG_DIR,
         learning_rate=LR,
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
+        per_device_train_batch_size=PER_DEVICE_BATCH_SIZE,
+        per_device_eval_batch_size=PER_DEVICE_BATCH_SIZE,
         num_train_epochs=TRAIN_EPOCHS,
         evaluation_strategy='steps',
         logging_strategy='steps',

@@ -3,11 +3,11 @@ import pandas as pd
 import random
 from tqdm import tqdm
 
-MODEL_NAME = '1l1h_top_two_max_len_3'
+MODEL_NAME = '1l1h_top_two_max_len_3_range_64'
 # MODEL_NAME = '1l1h_no_same_permutation'
 # MODEL_PATH = './logs/1l1h_no_same_permutation/trained'
 MODEL_PATH = f'./logs/{MODEL_NAME}/trained'
-DATA_PATH = './data/top_two_max_len_3_val.csv' 
+DATA_PATH = './data/top_two_max_len_3_range_64_val.csv' 
 # DATA_PATH = './data/no_pairs_rep_test.csv' 
 # DATA_PATH = './data/test_no_rep.csv' 
 
@@ -62,11 +62,18 @@ def test_whole_set_top1(data_eval, output_file=None):
     wrong_predictions = []
     for i in tqdm(range(len(text)), desc="Testing on the whole test set"):
         result = pipe(text[i])
-        top1_prediction = result[0]
-        word = top1_prediction['token_str'] # get top1 prediction
-        score = top1_prediction['score']
+        top1_prediction = []
+        word = []
+        score = []
+        for j in range(len(result)):
+            top1_prediction.append(result[j][0])
+            word.append(result[j][0]['token_str'])
+            # make score remain four decimal places
+            score.append(f"{result[j][0]['score']:.4f}")
+        # convert word to a string separated by space
+        word = ' '.join(word)
         if word != labels[i]:
-            wrong_predictions.append((text[i], word, labels[i], score))
+            wrong_predictions.append((text[i], word, labels[i], ' '.join(score)))
 
     print()
 
@@ -74,9 +81,9 @@ def test_whole_set_top1(data_eval, output_file=None):
         with open(output_file, 'w') as f:
             for i in range(len(wrong_predictions)):
                 f.write(f"Input: {wrong_predictions[i][0]}\n")
-                f.write(f"Predicted word: {wrong_predictions[i][1]}\n")
-                f.write(f"True word: {wrong_predictions[i][2]}\n")
-                f.write(f"Score: {wrong_predictions[i][3]:.4f}\n\n")
+                f.write(f"Predicted words: {wrong_predictions[i][1]}\n")
+                f.write(f"True words: {wrong_predictions[i][2]}\n")
+                f.write(f"Scores: {wrong_predictions[i][3]}\n\n")
             f.write(f"Number of samples in the test set: {len(text)}\n")
             f.write(f"Number of wrong predictions: {len(wrong_predictions)}\n")
             f.write(f"Accuracy: {(len(text) - len(wrong_predictions)) / len(text) * 100:.2f}%\n")
@@ -85,9 +92,9 @@ def test_whole_set_top1(data_eval, output_file=None):
         print("Wrong predictions:")
         for i in range(len(wrong_predictions)):
             print(f"Input: {wrong_predictions[i][0]}")
-            print(f"Predicted word: {wrong_predictions[i][1]}")
-            print(f"True word: {wrong_predictions[i][2]}")
-            print(f"Score: {wrong_predictions[i][3]:.4f}")
+            print(f"Predicted words: {wrong_predictions[i][1]}")
+            print(f"True words: {wrong_predictions[i][2]}")
+            print(f"Scores: {wrong_predictions[i][3]}")
             print()
         print(f"Number of samples in the test set: {len(text)}")
         print(f"Number of wrong predictions: {len(wrong_predictions)}")

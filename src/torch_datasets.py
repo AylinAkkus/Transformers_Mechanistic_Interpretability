@@ -8,7 +8,7 @@ D_VOCAB = 64
 
 def parse_data(data):
     def parse_inputs(row):
-        "Given a row, returns the input pattern."
+        """Given a row, returns the input pattern."""
         lst = row[1]
         pattern = ""
 
@@ -19,19 +19,22 @@ def parse_data(data):
         # Add the remaining part
         pattern += "[SEP] "
         pattern += "[MASK] " * len(lst)   
+        # trim the space at the end
+        pattern = pattern.strip()
         return pattern
 
     def parse_outputs(row):
-        "Given a row, returns the output pattern."
+        """Given a row, returns the output pattern."""
         lst = row[0]
         pattern = ""
 
         # Unpack the list into a string of values
         for i in lst:
             pattern += f"{i} "
+        pattern = pattern.strip()
         return pattern
 
-    "Given a dataframe, returns the input and output patterns."
+    """Given a dataframe, returns the input and output patterns."""
     data["text"] = data.apply(parse_inputs, axis=1)
     data["labels"] = data.apply(parse_outputs, axis=1)
     return data.loc[:, ["text", "labels"]]
@@ -40,11 +43,11 @@ def parse_data(data):
 class SwapDataset(Dataset):
 
     def sorted_list_random_numbers(self,length):
-        "Generates a list of random numbers of a given length and sorts them."
+        """Generates a list of random numbers of a given length and sorts them."""
         return sorted([random.randint(0, D_VOCAB) for i in range(length)])
 
     def swap_two_numbers(self,sorted_list):
-        "Given a sorted list, swaps two numbers in the list."
+        """Given a sorted list, swaps two numbers in the list."""
         ls = sorted_list.copy()
         idx = random.randint(0,len(ls)-2)
         ls[idx], ls[idx+1] = ls[idx+1], ls[idx]
@@ -84,7 +87,7 @@ class DisplaceDataset(Dataset):
         return sorted([random.randint(0, D_VOCAB) for i in range(length)])
 
     def displace(self, lst):
-        "Given a list, displaces item at index i to index j in the list."
+        """Given a list, displaces item at index i to index j in the list."""
         i, j = 0,0
         while abs(i - j) < 1:
             i = random.randint(0, len(lst)-1)
