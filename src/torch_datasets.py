@@ -44,7 +44,7 @@ class SwapDataset(Dataset):
 
     def sorted_list_random_numbers(self,length):
         """Generates a list of random numbers of a given length and sorts them."""
-        return sorted([random.randint(0, D_VOCAB) for i in range(length)])
+        return sorted([random.randint(0, D_VOCAB) for i in range(length)], reverse=True)
 
     def swap_two_numbers(self,sorted_list):
         """Given a sorted list, swaps two numbers in the list."""
@@ -84,7 +84,7 @@ class DisplaceDataset(Dataset):
         return self.data["text"][idx], self.data["labels"][idx]
     
     def sorted_list_random_numbers(self, length):
-        return sorted([random.randint(0, D_VOCAB) for i in range(length)])
+        return sorted([random.randint(0, D_VOCAB) for i in range(length)], reverse=True)
 
     def displace(self, lst):
         """Given a list, displaces item at index i to index j in the list."""
@@ -111,6 +111,32 @@ class DisplaceDataset(Dataset):
         df["displaced"] = [self.displace(lst) for lst in sorted_lst]
         data = parse_data(df)
         return data
+
+
+class TopKDataset(Dataset):
+    def generate_input(self, length, num_range):
+        """Generates a list of random numbers of a given length and sorts them."""
+        return [random.randint(0, num_range) for i in range(length)] 
+
+    def __init__(self, num_samples, length, K, num_range=64, random_seed=None):
+        if random_seed:
+            random.seed(random_seed)
+        input_lists = [self.generate_input(length, num_range) for i in range(num_samples)]
+        sorted_input_lists = [sorted(lst, reverse=True) for lst in input_lists]
+        top_k = [sorted_input_lists[i][:K] for i in range(num_samples)]
+        text = [" ".join([str(i) for i in lst]) for lst in input_lists]
+        labels = [" ".join([str(i) for i in lst]) for lst in top_k]
+        for i in range(num_samples):
+            text[i] += ' [SEP]'
+            text[i] += ' [MASK]' * K
+        self.data = pd.DataFrame({"text": text, "labels": labels})
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return (self.data["text"][idx], self.data["labels"][idx])
+
     
 if __name__ == "__main__":
     displace_dataset = DisplaceDataset(length=6, num_samples=100)

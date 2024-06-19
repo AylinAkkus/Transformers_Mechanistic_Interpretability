@@ -2,12 +2,14 @@ from transformers import pipeline, AutoModelForMaskedLM, AutoTokenizer
 import pandas as pd
 import random
 from tqdm import tqdm
+from torch_datasets import TopKDataset
 
-MODEL_NAME = '1l1h_top_two_max_len_3_range_64'
+MODEL_NAME = '3l1h_top_2_max_len_5_range_341'
 # MODEL_NAME = '1l1h_no_same_permutation'
 # MODEL_PATH = './logs/1l1h_no_same_permutation/trained'
 MODEL_PATH = f'./logs/{MODEL_NAME}/trained'
-DATA_PATH = './data/top_two_max_len_3_range_64_val.csv' 
+USE_DATASET_GENERATION = True
+# DATA_PATH = './data/top_two_max_len_3_range_64_val.csv' 
 # DATA_PATH = './data/no_pairs_rep_test.csv' 
 # DATA_PATH = './data/test_no_rep.csv' 
 
@@ -102,6 +104,7 @@ def test_whole_set_top1(data_eval, output_file=None):
 
 
 if __name__ == '__main__':
+
     model = AutoModelForMaskedLM.from_pretrained(MODEL_PATH)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     print(f"Number of trainable parameters: {model.num_parameters()}")
@@ -111,6 +114,9 @@ if __name__ == '__main__':
     # load trained model in logs with pipeline
     pipe = pipeline('fill-mask', model=model, tokenizer=tokenizer)
 
-    data_eval = pd.read_csv(DATA_PATH, dtype=str)
+    if USE_DATASET_GENERATION:
+        data_eval = TopKDataset(10000, 5, 2, 341, random_seed=42).data
+    else:
+        data_eval = pd.read_csv(DATA_PATH, dtype=str)
 
     test_whole_set_top1(data_eval, output_file=f'./logs/{MODEL_NAME}/wrong_predictions.txt')
