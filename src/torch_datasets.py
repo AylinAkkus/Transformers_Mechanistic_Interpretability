@@ -44,7 +44,7 @@ class SwapDataset(Dataset):
 
     def sorted_list_random_numbers(self,length):
         """Generates a list of random numbers of a given length and sorts them."""
-        return sorted([random.randint(0, D_VOCAB) for i in range(length)])
+        return sorted([random.randint(0, D_VOCAB) for i in range(length)], reverse=True)
 
     def swap_two_numbers(self,sorted_list):
         """Given a sorted list, swaps two numbers in the list."""
@@ -73,7 +73,6 @@ class SwapDataset(Dataset):
 class DisplaceDataset(Dataset):
 
     def __init__(self, length=4, num_samples=2000):
-        print("hELLO")
         self.data = self.generate_displace_dataset(length=length, num_samples=num_samples)
         return
     
@@ -84,7 +83,7 @@ class DisplaceDataset(Dataset):
         return self.data["text"][idx], self.data["labels"][idx]
     
     def sorted_list_random_numbers(self, length):
-        return sorted([random.randint(0, D_VOCAB) for i in range(length)])
+        return sorted([random.randint(0, D_VOCAB) for i in range(length)], reverse=True)
 
     def displace(self, lst):
         """Given a list, displaces item at index i to index j in the list."""
