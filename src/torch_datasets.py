@@ -73,7 +73,6 @@ class SwapDataset(Dataset):
 class DisplaceDataset(Dataset):
 
     def __init__(self, length=4, num_samples=2000):
-        print("hELLO")
         self.data = self.generate_displace_dataset(length=length, num_samples=num_samples)
         return
     
@@ -160,8 +159,30 @@ class ListSortDataset(Dataset):
     def __getitem__(self, idx):
         return (self.data["text"][idx], self.data["labels"][idx])
     
+class UnsortedDataset(Dataset):
+    """Torch Dataset for complete list sorting task."""
+    def __init__(self, length=4, num_samples=2000):
+        self.data = self.generate_data(length, num_samples)
+
+    def sorted_list_random_numbers(self, length):
+        return [random.randint(0, D_VOCAB) for i in range(length)]
+    
+    def generate_data(self, length, num_samples):
+        unsorted_lst = [self.sorted_list_random_numbers(length) for i in range(num_samples)]
+        df = pd.DataFrame()
+        df["sorted"] = [sorted(lst) for lst in unsorted_lst]
+        df["unsorted"] = unsorted_lst
+        data = parse_data(df)
+        return data
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return self.data["text"][idx], self.data["labels"][idx]
+
 if __name__ == "__main__":
-    displace_dataset = DisplaceDataset(length=6, num_samples=100)
+    displace_dataset = UnsortedDataset(length=6, num_samples=100)
     data_loader = DataLoader(displace_dataset, batch_size=4, shuffle=True)
     for batch_idx, (inputs, labels) in enumerate(data_loader):
         print("Batch: ", batch_idx)
