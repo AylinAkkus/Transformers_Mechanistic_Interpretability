@@ -4,7 +4,7 @@ import random
 from tqdm import tqdm
 from torch_datasets import TopKDataset
 
-MODEL_NAME = '3l1h_top_2_max_len_5_range_341'
+MODEL_NAME = '3l4h_top_2_max_len_5_range_341'
 # MODEL_NAME = '1l1h_no_same_permutation'
 # MODEL_PATH = './logs/1l1h_no_same_permutation/trained'
 MODEL_PATH = f'./logs/{MODEL_NAME}/trained'
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     pipe = pipeline('fill-mask', model=model, tokenizer=tokenizer)
 
     if USE_DATASET_GENERATION:
-        data_eval = TopKDataset(10000, 5, 2, 341, random_seed=42).data
+        data_eval = TopKDataset(10000, 5, 2, 341, random_seed=42).data # * adjust this line to the corresponding dataset
     else:
         data_eval = pd.read_csv(DATA_PATH, dtype=str)
 

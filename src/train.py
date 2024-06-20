@@ -8,18 +8,19 @@ from torch_datasets import TopKDataset
 import torch
 import numpy as np
 
-PROJECT_NAME = "3l1h_top_2_max_len_5_range_341"
+PROJECT_NAME = "3l4h_top_2_max_len_5_range_341"
 N_LAYERS = 3
-N_HEADS = 1
+N_HEADS = 4
 LOG_DIR = f"logs/{PROJECT_NAME}"
 USE_DATASET_GENERATION = True
 # DATA_TRAIN_PATH = "data/top_two_max_len_3_range_64_train.csv"
 # DATA_EVAL_PATH = "data/top_two_max_len_3_range_64_val.csv"
-TRAIN_EPOCHS = 2
+TRAIN_EPOCHS = 4
 MODEL_NAME = "distilbert-base-uncased"
 RESUME_FROM_CHECKPOINT = True
 EARLY_STOPPING_PATIENCE = 5
-LR = 2e-5
+# LR = 2e-5
+LR = 1e-5
 LOGGING_PER_STEPS = 50
 SAVE_PER_STEPS = 250
 SAVE_TOTAL_LIMIT = 2

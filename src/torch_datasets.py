@@ -137,6 +137,28 @@ class TopKDataset(Dataset):
     def __getitem__(self, idx):
         return (self.data["text"][idx], self.data["labels"][idx])
 
+class ListSortDataset(Dataset):
+    def generate_input(self, length, num_range):
+        """Generates a list of random numbers of a given length and sorts them."""
+        return [random.randint(0, num_range) for i in range(length)] 
+
+    def __init__(self, num_samples, list_length, num_range=64, random_seed=None):
+        if random_seed:
+            random.seed(random_seed)
+        input_lists = [self.generate_input(list_length, num_range) for i in range(num_samples)]
+        sorted_lists = [sorted(lst, reverse=True) for lst in input_lists]
+        text = [" ".join([str(i) for i in lst]) for lst in input_lists]
+        labels = [" ".join([str(i) for i in lst]) for lst in sorted_lists]
+        for i in range(num_samples):
+            text[i] += ' [SEP]'
+            text[i] += ' [MASK]' * list_length
+        self.data = pd.DataFrame({"text": text, "labels": labels})
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return (self.data["text"][idx], self.data["labels"][idx])
     
 if __name__ == "__main__":
     displace_dataset = DisplaceDataset(length=6, num_samples=100)
