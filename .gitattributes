@@ -1,0 +1,13 @@
+logs/1l1h_top_two_max_len_3_range_64 filter=lfs diff=lfs merge=lfs -text
+logs/3l4h_top_2_max_len_5_range_341 filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_no_rep filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_no_same_permutation filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_sortlist_len_3_range_64 filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_sortlist_len_4_range_64 filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_top_two_max_len_3 filter=lfs diff=lfs merge=lfs -text
+logs/simple_model filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_no_pairs_rep filter=lfs diff=lfs merge=lfs -text
+logs/1l1h_top_2_max_len_5_range_64 filter=lfs diff=lfs merge=lfs -text
+logs/3l1h_sortlist_len_3_range_64 filter=lfs diff=lfs merge=lfs -text
+logs/3l1h_top_2_max_len_5_range_341 filter=lfs diff=lfs merge=lfs -text
+logs/3l1h_top_2_max_len_5_range_64 filter=lfs diff=lfs merge=lfs -text
