@@ -1,6 +1,7 @@
 # Ignore node_modules directory
 miscellaneous/
 wandb/
+logs/
 
 # Ignore OS-generated files
 .DS_Store
