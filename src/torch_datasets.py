@@ -181,6 +181,30 @@ class UnsortedDataset(Dataset):
     def __getitem__(self, idx):
         return self.data["text"][idx], self.data["labels"][idx]
 
+class ReverseListDataset(Dataset):
+    def generate_input(self, length, num_range):
+        """Generates a list of random numbers of a given length and sorts them."""
+        return sorted([random.randint(0, num_range) for i in range(length)])
+
+    def __init__(self, num_samples, length, num_range=64, random_seed=None):
+        if random_seed:
+            random.seed(random_seed)
+        input_lists = [self.generate_input(length, num_range) for i in range(num_samples)]
+        reversed_lists = [lst[::-1] for lst in input_lists]
+        text = [" ".join([str(i) for i in lst]) for lst in input_lists]
+        labels = [" ".join([str(i) for i in lst]) for lst in reversed_lists]
+        for i in range(num_samples):
+            text[i] += ' [SEP]'
+            text[i] += ' [MASK]' * length
+        self.data = pd.DataFrame({"text": text, "labels": labels})
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return (self.data["text"][idx], self.data["labels"][idx])
+
+
 if __name__ == "__main__":
     displace_dataset = UnsortedDataset(length=6, num_samples=100)
     data_loader = DataLoader(displace_dataset, batch_size=4, shuffle=True)
